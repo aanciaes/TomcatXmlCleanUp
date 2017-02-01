@@ -1,22 +1,25 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
+
 <html>
     <head>
         <title>Download Error</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="stylesheets/main.css">
     </head>
     <body>
-        <div>
-            <h3>Something went wrong, please try again</h3>
-            <br/>
-            <form action='index.html' method='post'>
-                <input type='submit' value='Go Back'/>
-            </form>
-        </div>
+        <section class="row-alt">
+            <div class="lead container">
+                <h1>Something went wrong, please try again</h1>
+                <h3>Check log for more information</h3><hr/>
+                <form action='index.html' method='post'>
+                    <input class="btn btn-alt" type='submit' value='Start Again'/>
+                </form>
+            </div>
+        </section>
+
+        <footer class="primary-footer container group">
+            <small>EMSA &copy; 2017 </small>
+        </footer>
     </body>
 </html>
