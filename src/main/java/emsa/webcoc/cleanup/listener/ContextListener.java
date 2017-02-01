@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package javaResources;
+package emsa.webcoc.cleanup.listener;
 
 import java.util.Map;
 import java.util.Set;
@@ -11,12 +11,15 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+
 /**
+ * Web application lifecycle listener.
  *
- * @author miguel
+ * @author aanciaes
  */
 @WebListener
 public class ContextListener implements ServletContextListener {

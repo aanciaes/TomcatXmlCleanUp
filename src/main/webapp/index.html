@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Xml Clean Up</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="stylesheets/main.css">
+        <script type="text/javascript">
+            
+            function enableSubmit() {
+                var label = document.getElementById("submitLbl");
+                label.hidden = false;
+            }
+            
+        </script>
+    </head>
+    <body>    
+        <section class="row-alt">
+            <div class="lead container">
+                <h1>Select file to clean</h1>
+                
+                <form class="col-1-3" id="uploadFile" method="POST" action="upload.jsp" enctype="multipart/form-data">
+                    <fieldset class="query-group">
+                        <input type="hidden" name="todo" value="action1" />
+
+                        <label>
+                            File:
+                            <input id="file" class="btn btn-alt" name="file" type="file" accept=".xml" onchange="enableSubmit()" required>
+                        </label>
+
+                        <label id="submitLbl" hidden>
+                            and click button
+                            <input id="submitBtn" class="btn btn-alt" type="submit" value="Clean File"/>
+                        </label>
+                    </fieldset>
+                </form>
+            </div>
+        </section>
+
+        <footer class="primary-footer container group">
+            <small>EMSA &copy; 2017 </small>
+        </footer>
+
+
+    </body>
+</html>

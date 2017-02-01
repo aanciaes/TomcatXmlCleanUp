@@ -3,34 +3,45 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package javaResources;
+package emsa.webcoc.cleanup.listener;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
- * @author miguel
+ * @author aanciaes
  */
 public class ReadConfig {
+    
+    private final Logger logger = LogManager.getLogger(ReadConfig.class);
     
     private Properties prop;
     
     public ReadConfig () {
+        
+        logger.info("ReadConfig Initialized");
+        
+        InputStream inputStream = null;
+         
         try{
             prop = new Properties();
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("/resources/config/config.properties");
+            inputStream = getClass().getClassLoader().getResourceAsStream("config.properties");
             
             if(inputStream != null){
+                logger.info("Reding properties");
                 prop.load(inputStream);
+                inputStream.close();
             }else{
-                System.err.println("Err input Stream == null");
+                logger.fatal("Can't open config.properties file");
             }          
         }catch (IOException e ) {
-            System.out.println("I/O Exception");
+            logger.fatal("I/O Exception");
         }
     }
     

@@ -3,12 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package javaResources;
+package emsa.webcoc.cleanup.core;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.servlet.ServletContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -28,10 +27,10 @@ import org.xml.sax.SAXParseException;
 
 /**
  *
- * @author miguel
+ * @author aanciaes
  */
 public class CoCCleanUp {
-    
+
     private final Logger logger = LogManager.getLogger(CoCCleanUp.class);
 
     //New file name
@@ -52,8 +51,8 @@ public class CoCCleanUp {
         valid = 0;
         cocs = null;
         newDoc = null;
-        errorMessage=null;
-        
+        errorMessage = null;
+
         NEWFILENAME = newFileName;
         FILELOCATION = newFileLocation + NEWFILENAME;
     }
@@ -71,6 +70,8 @@ public class CoCCleanUp {
             cocs = newDoc.createElement("cocs");
             rootElement.appendChild(cocs);
 
+            checkBasicSintax(doc);
+            
             NodeList nodeLst = doc.getElementsByTagName("coc");
 
             int size = nodeLst.getLength();
@@ -86,11 +87,13 @@ public class CoCCleanUp {
             StreamResult output = new StreamResult(new File(FILELOCATION));
 
             transformer.transform(source, output);
-            
+
             logger.info("File " + NEWFILENAME + " was cleaned");
 
             return 0;
-            
+        } catch (NullPointerException ex) {
+            errorMessage = "Wrong XML syntax";
+            return -1;
         } catch (SAXParseException ex) {
             errorMessage = "An error occured while parsing the file</br>Xml file Line Number: " + ex.getLineNumber() + "</br>" + ex.getMessage();
             logger.error(errorMessage);
@@ -115,7 +118,7 @@ public class CoCCleanUp {
 
         if (cocDocument != null) {
             Element cocDocument_e = (Element) cocDocument;
-            
+
             if (handleCoCDocument(cocDocument_e)) {
                 Element e = (Element) newDoc.importNode(cocNode, true);
                 cocs.appendChild(e);
@@ -134,16 +137,25 @@ public class CoCCleanUp {
         }
         return false;
     }
+    
+    public void checkBasicSintax(Document doc) throws NullPointerException{
+        if(doc.getElementsByTagName("documents").getLength() == 0)
+            throw new NullPointerException();
+        if(doc.getElementsByTagName("cocs").getLength() == 0)
+            throw new NullPointerException();
+        if(doc.getElementsByTagName("status").getLength() == 0)
+            throw new NullPointerException();
+    }
 
     public String printHTMLStatistics() {
-        String statistics = "Total number of nodes: " + (valid + notValid) + "</br>" +
-        "Number of valid nodes: " + valid +
-        "</br>Number of NOT valid nodes: " + notValid + "</br>";
-        
+        String statistics = "Total number of nodes: " + (valid + notValid) + "</br>"
+                + "Number of valid nodes: " + valid
+                + "</br>Number of NOT valid nodes: " + notValid + "</br>";
+
         return statistics;
     }
-    
-    public String getErrorMessage () {
+
+    public String getErrorMessage() {
         return errorMessage;
     }
 }

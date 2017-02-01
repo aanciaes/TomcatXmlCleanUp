@@ -1,6 +1,11 @@
-package servlet;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
-import javaResources.CoCCleanUp;
+
+import emsa.webcoc.cleanup.core.CoCCleanUp;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,9 +24,10 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+
 /**
  *
- * @author miguel
+ * @author aanciaes
  */
 @WebServlet(name = "CleanUp", urlPatterns = {"/cleanUp"})
 public class UploadServet extends HttpServlet {
@@ -32,8 +38,6 @@ public class UploadServet extends HttpServlet {
 
     //Repository for files over MAXMEMSIZE
     private static String REPOSITORY;
-
-    private boolean isMultipart;
 
     @Override
     public void init() {
@@ -54,7 +58,7 @@ public class UploadServet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        isMultipart = ServletFileUpload.isMultipartContent(request);
+        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
 

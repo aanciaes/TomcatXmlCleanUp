@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package servlet;
+package emsa.webcoc.cleanup.servlet;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,12 +15,14 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+
 /**
  *
- * @author miguel
+ * @author aanciaes
  */
 @WebServlet(name = "DownloadServlet", urlPatterns = {"/download"})
 public class DownloadServlet extends HttpServlet {
