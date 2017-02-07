@@ -114,7 +114,7 @@
                         <h3>Something went wrong</h3>
                         <form action='index.html' method='post'><input class="btn btn-alt" type='submit' value='Clean another file'/></form>
                     <%
-                        logger.fatal(ex.getStackTrace().toString());
+                        logger.fatal(ex.getMessage());
                     }%>
                         
                     <%!

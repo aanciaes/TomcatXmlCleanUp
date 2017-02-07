@@ -71,7 +71,7 @@ public class CoCCleanUp {
             rootElement.appendChild(cocs);
 
             checkBasicSintax(doc);
-            
+
             NodeList nodeLst = doc.getElementsByTagName("coc");
 
             int size = nodeLst.getLength();
@@ -92,7 +92,7 @@ public class CoCCleanUp {
 
             return 0;
         } catch (NullPointerException ex) {
-            errorMessage = "Wrong XML syntax";
+            errorMessage = "Wrong XML syntax: " + ex.getMessage();
             return -1;
         } catch (SAXParseException ex) {
             errorMessage = "An error occured while parsing the file</br>Xml file Line Number: " + ex.getLineNumber() + "</br>" + ex.getMessage();
@@ -127,24 +127,28 @@ public class CoCCleanUp {
     }
 
     public boolean handleCoCDocument(Element cocDocumElement) {
-        if (cocDocumElement.getElementsByTagName("status").item(0).getTextContent().equals("not valid")) {
-            notValid++;
+        if (cocDocumElement.getElementsByTagName("status").getLength() == 0) {
+            throw new NullPointerException("'status' tag missing or mal-formed");
+        } else {
+            if (cocDocumElement.getElementsByTagName("status").item(0).getTextContent().equals("not valid")) {
+                notValid++;
+                return false;
+            }
+            if (cocDocumElement.getElementsByTagName("status").item(0).getTextContent().equals("valid")) {
+                valid++;
+                return true;
+            }
             return false;
         }
-        if (cocDocumElement.getElementsByTagName("status").item(0).getTextContent().equals("valid")) {
-            valid++;
-            return true;
-        }
-        return false;
     }
-    
-    public void checkBasicSintax(Document doc) throws NullPointerException{
-        if(doc.getElementsByTagName("documents").getLength() == 0)
-            throw new NullPointerException();
-        if(doc.getElementsByTagName("cocs").getLength() == 0)
-            throw new NullPointerException();
-        if(doc.getElementsByTagName("status").getLength() == 0)
-            throw new NullPointerException();
+
+    public void checkBasicSintax(Document doc) throws NullPointerException {
+        if (doc.getElementsByTagName("documents").getLength() == 0) {
+            throw new NullPointerException("'documents' tag missing or mal-formed");
+        }
+        if (doc.getElementsByTagName("cocs").getLength() == 0) {
+            throw new NullPointerException("'cocs' tag missing or mal-formed");
+        }
     }
 
     public String printHTMLStatistics() {
