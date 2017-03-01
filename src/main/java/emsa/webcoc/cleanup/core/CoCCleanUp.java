@@ -33,6 +33,10 @@ public class CoCCleanUp {
 
     private final Logger logger = LogManager.getLogger(CoCCleanUp.class);
 
+    private static final String CoC = "coc";
+    private static final String EaR = "ear";
+    private static final String CoP = "cop";
+
     //New file name
     private final String NEWFILENAME;
 
@@ -40,16 +44,38 @@ public class CoCCleanUp {
     private final String FILELOCATION;
 
     private String errorMessage;
-    private int notValid;
-    private int valid;
+
+    //Statistics
+    private int total;
+    //coc
+    private int cocNotValid;
+    private int cocValid;
+
+    //ear
+    private int earNotValid;
+    private int earValid;
+
+    //cop
+    private int copNotValid;
+    private int copValid;
+    //
 
     private Document newDoc;
     private Element cocs;
+    private Element ears;
+    private Element cops;
 
     public CoCCleanUp(String newFileName, String newFileLocation) {
-        notValid = 0;
-        valid = 0;
+        total = 0;
+        cocNotValid = 0;
+        cocValid = 0;
+        earNotValid = 0;
+        earValid = 0;
+        copNotValid = 0;
+        copValid = 0;
         cocs = null;
+        ears = null;
+        cops = null;
         newDoc = null;
         errorMessage = null;
 
@@ -69,15 +95,19 @@ public class CoCCleanUp {
             newDoc.appendChild(rootElement);
             cocs = newDoc.createElement("cocs");
             rootElement.appendChild(cocs);
+            ears = newDoc.createElement("ears");
+            rootElement.appendChild(ears);
+            cops = newDoc.createElement("cops");
+            rootElement.appendChild(cops);
 
             checkBasicSintax(doc);
 
-            NodeList nodeLst = doc.getElementsByTagName("coc");
+            NodeList nodeLst = doc.getElementsByTagName("documents").item(0).getChildNodes();
 
             int size = nodeLst.getLength();
 
             for (int i = 0; i < size; i++) {
-                handleCoC(nodeLst.item(i));
+                handleGroup(nodeLst.item(i));
             }
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -105,37 +135,84 @@ public class CoCCleanUp {
         }
     }
 
-    public void handleCoC(Node cocNode) {
-        NodeList nodeList = cocNode.getChildNodes();
-        Node cocDocument = null;
+    public void handleGroup(Node group) {
+        if (group.getNodeType() == Node.ELEMENT_NODE) {
+            NodeList nodeList = group.getChildNodes();
+            int size = group.getChildNodes().getLength();
 
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node n = nodeList.item(i);
-            if (n.getNodeType() == Node.ELEMENT_NODE && n.getNodeName().equals("cocDocument")) {
-                cocDocument = n;
-            }
-        }
-
-        if (cocDocument != null) {
-            Element cocDocument_e = (Element) cocDocument;
-
-            if (handleCoCDocument(cocDocument_e)) {
-                Element e = (Element) newDoc.importNode(cocNode, true);
-                cocs.appendChild(e);
+            for (int i = 0; i < size; i++) {
+                handleElement(nodeList.item(i));
             }
         }
     }
 
-    public boolean handleCoCDocument(Element cocDocumElement) {
-        if (cocDocumElement.getElementsByTagName("status").getLength() == 0) {
+    public void handleElement(Node xNode) {
+
+        if (xNode.getNodeType() == Node.ELEMENT_NODE) {
+            total++;
+            NodeList nodeList = xNode.getChildNodes();
+            Node xDocument = null;
+
+            String nodeType = xNode.getNodeName();
+            String x = nodeType.concat("Document");
+
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node n = nodeList.item(i);
+                if (n.getNodeType() == Node.ELEMENT_NODE && n.getNodeName().equals(x)) {
+                    xDocument = n;
+                }
+            }
+
+            if (xDocument != null) {
+                Element xDocuElement_e = (Element) xDocument;
+
+                switch (nodeType) {
+                    case CoC:
+                        if (verifyValidity(xDocuElement_e)) {
+                            Element e = (Element) newDoc.importNode(xNode, true);
+                            cocs.appendChild(e);
+                            cocValid++;
+                        } else {
+                            cocNotValid++;
+                        }
+                        break;
+
+                    case EaR:
+                        if (verifyValidity(xDocuElement_e)) {
+                            Element e = (Element) newDoc.importNode(xNode, true);
+                            ears.appendChild(e);
+                            earValid++;
+                        } else {
+                            earNotValid++;
+                        }
+                        break;
+
+                    case CoP:
+                        if (verifyValidity(xDocuElement_e)) {
+                            Element e = (Element) newDoc.importNode(xNode, true);
+                            cops.appendChild(e);
+                            copValid++;
+                        } else {
+                            copNotValid++;
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+        }
+    }
+
+    public boolean verifyValidity(Element xDocumElement) {
+        if (xDocumElement.getElementsByTagName("status").getLength() == 0) {
             throw new NullPointerException("'status' tag missing or mal-formed");
         } else {
-            if (cocDocumElement.getElementsByTagName("status").item(0).getTextContent().equals("not valid")) {
-                notValid++;
+            if (xDocumElement.getElementsByTagName("status").item(0).getTextContent().equals("not valid")) {
                 return false;
             }
-            if (cocDocumElement.getElementsByTagName("status").item(0).getTextContent().equals("valid")) {
-                valid++;
+            if (xDocumElement.getElementsByTagName("status").item(0).getTextContent().equals("valid")) {
                 return true;
             }
             return false;
@@ -146,15 +223,21 @@ public class CoCCleanUp {
         if (doc.getElementsByTagName("documents").getLength() == 0) {
             throw new NullPointerException("'documents' tag missing or mal-formed");
         }
-        if (doc.getElementsByTagName("cocs").getLength() == 0) {
-            throw new NullPointerException("'cocs' tag missing or mal-formed");
-        }
     }
 
     public String printHTMLStatistics() {
-        String statistics = "Total number of nodes: " + (valid + notValid) + "</br>"
-                + "Number of valid nodes: " + valid
-                + "</br>Number of NOT valid nodes: " + notValid + "</br>";
+        String statistics = "Total number of nodes: " + total + "</br>"
+                + "Total number of valid nodes: " + (cocValid + earValid + copValid)
+                + "</br>Number of NOT valid nodes: " + (cocNotValid + earNotValid + copNotValid) + "</br>"
+                + "Total number of CoC nodes: " + (cocValid + cocNotValid) + "</br>"
+                + "Number of CoC valid nodes: " + cocValid
+                + "</br>Number of CoC NOT valid nodes: " + cocNotValid + "</br>"
+                + "Total number of EaR nodes: " + (earNotValid + earValid) + "</br>"
+                + "Number of EaR valid nodes: " + earValid
+                + "</br>Number of EaR NOT valid nodes: " + earNotValid + "</br>"
+                + "Total number of CoP nodes: " + (copValid + copNotValid) + "</br>"
+                + "Number of CoP valid nodes: " + copValid
+                + "</br>Number of CoP NOT valid nodes: " + copNotValid + "</br>";
 
         return statistics;
     }
