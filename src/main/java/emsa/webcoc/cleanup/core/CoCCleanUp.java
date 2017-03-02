@@ -135,6 +135,9 @@ public class CoCCleanUp {
         }
     }
 
+    /**
+     * Handles the first group tags: <cocs> <ears> <cops>
+     */
     public void handleGroup(Node group) {
         if (group.getNodeType() == Node.ELEMENT_NODE) {
             NodeList nodeList = group.getChildNodes();
@@ -229,12 +232,15 @@ public class CoCCleanUp {
         String statistics = "Total number of nodes: " + total + "</br>"
                 + "Total number of valid nodes: " + (cocValid + earValid + copValid)
                 + "</br>Number of NOT valid nodes: " + (cocNotValid + earNotValid + copNotValid) + "</br>"
+                + "<hr/>CoC Nodes <br>"
                 + "Total number of CoC nodes: " + (cocValid + cocNotValid) + "</br>"
                 + "Number of CoC valid nodes: " + cocValid
                 + "</br>Number of CoC NOT valid nodes: " + cocNotValid + "</br>"
+                + "<hr/>EaR Nodes <br>"
                 + "Total number of EaR nodes: " + (earNotValid + earValid) + "</br>"
                 + "Number of EaR valid nodes: " + earValid
                 + "</br>Number of EaR NOT valid nodes: " + earNotValid + "</br>"
+                + "<hr/>CoP Nodes <br>"
                 + "Total number of CoP nodes: " + (copValid + copNotValid) + "</br>"
                 + "Number of CoP valid nodes: " + copValid
                 + "</br>Number of CoP NOT valid nodes: " + copNotValid + "</br>";
